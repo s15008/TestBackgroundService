@@ -15,7 +15,7 @@ public class MainActivity extends Activity {
         findViewById(R.id.btn_send).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent serviceIntent = new Intent(getBaseContext(), MyService.class);
+                Intent serviceIntent = new Intent(getBaseContext(), MyClient.class);
                 startService(serviceIntent);
             }
         });

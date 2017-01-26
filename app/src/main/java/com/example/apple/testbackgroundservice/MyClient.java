@@ -21,8 +21,8 @@ import java.net.Socket;
  * Created by apple on 2017/01/27.
  */
 
-public class MyService extends Service {
-    private static final String TAG = "MyService";
+public class MyClient extends Service {
+    private static final String TAG = "MyClient";
 
     private Handler mServiceHandler;
     private static final String[] messages = {"{\"name\":\"gorilla\"}", "{\"name\":\"hippopotamus\"}"};
@@ -30,7 +30,7 @@ public class MyService extends Service {
     @Override
     public void onCreate() {
         // HandlerThreadの生成と実行
-        HandlerThread serviceThread = new HandlerThread("MyService", Process.THREAD_PRIORITY_BACKGROUND);
+        HandlerThread serviceThread = new HandlerThread("MyClient", Process.THREAD_PRIORITY_BACKGROUND);
         serviceThread.start();
 
         // Handlerの生成
