@@ -17,6 +17,7 @@
         </activity>
 
         <service android:name=".MyClient" />
+        <service android:name=".MyServer" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

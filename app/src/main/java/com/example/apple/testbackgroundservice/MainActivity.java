@@ -12,11 +12,15 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // サーバーサービスの起動
+        Intent serverIntent = new Intent(this, MyServer.class);
+        startService(serverIntent);
+
         findViewById(R.id.btn_send).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent serviceIntent = new Intent(getBaseContext(), MyClient.class);
-                startService(serviceIntent);
+                Intent clientIntent = new Intent(getBaseContext(), MyClient.class);
+                startService(clientIntent);
             }
         });
 

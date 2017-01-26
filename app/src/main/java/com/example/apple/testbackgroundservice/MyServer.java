@@ -15,24 +15,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
  * Created by apple on 2017/01/27.
  */
 
-public class MyClient extends Service {
-    private static final String TAG = "MyClient";
+public class MyServer extends Service {
+    private static final String TAG = "MyServer";
 
     private Handler mServiceHandler;
-    private static final String[] messages = {"{\"name\":\"gorilla\"}", "{\"name\":\"hippopotamus\"}"};
 
     @Override
     public void onCreate() {
         // HandlerThreadの生成と実行
         HandlerThread serviceThread = new HandlerThread(TAG, Process.THREAD_PRIORITY_BACKGROUND);
         serviceThread.start();
-
         // Handlerの生成
         mServiceHandler = new Handler(serviceThread.getLooper());
     }
@@ -43,38 +42,41 @@ public class MyClient extends Service {
         mServiceHandler.post(new Runnable() {
             @Override
             public void run() {
-                final String SERVER_HOST = "localhost";
-                final int SERVER_PORT = 9000;
+                final int LISTEN_PORT = 9000;
+                final char END_MARK = '.';
 
                 try {
-                    Socket socket = new Socket(SERVER_HOST, SERVER_PORT);
-
+                    ServerSocket serverSocket = new ServerSocket(LISTEN_PORT);
+                    Log.d(TAG, "サーバー動いてます");
+                    Socket socket = serverSocket.accept();
                     Reader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     Writer out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-                    for (String message : messages) {
-                        out.write(message);
+                    StringBuilder sb = new StringBuilder(4096);
+                    int c;
+                    while ((c = in.read()) != -1) {
+                        if (c == END_MARK) {
+                            break;
+                        }
+                        sb.append((char) c);
                     }
-                    out.write('.');
-                    out.flush();
 
-                    char[] buf = new char[4096];
-                    while (in.read(buf) != -1) {
-                        Log.e(TAG, (new String(buf)).trim());
-                    }
+                    out.write(sb.toString().toUpperCase());
+                    out.flush();
 
                     in.close();
                     out.close();
                     socket.close();
+                    serverSocket.close();
                 } catch (IOException e) {
                     Log.e(TAG, e.getMessage());
                 }
+
             }
         });
 
         return START_NOT_STICKY;
     }
-
 
     @Override
     public IBinder onBind(Intent intent) {
